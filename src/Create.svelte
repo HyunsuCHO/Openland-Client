@@ -2,7 +2,7 @@
     import Tooltip from './Tooltip.svelte'
     import ImageUploader from './ImageUploader.svelte'
     import {axios, web3, abi} from "./Singleton"
-    import {marketaddress} from "./Setting.js.bak"
+    import {marketaddress} from "./Setting.js"
     import {MetamaskAccounts} from'./Session'
     const generateRandomString = (num) => {
         const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';

@@ -3,7 +3,7 @@
     import {MetamaskAccounts} from "./Session"
     import {modaltoggle} from "./Singleton"
     import {web3, getContract} from "./Singleton"
-    import {marketaddress} from "./Setting.js.bak"
+    import {marketaddress} from "./Setting.js"
     export let assetid = 1, activityid = 1, to = "", assetaddress = "";
 
     let tokens = [], cost = 0, amount = 0, targetaddress="",mod = 0;

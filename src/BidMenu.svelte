@@ -2,7 +2,7 @@
     import {axios} from "./Singleton";
     import {MetamaskAccounts} from "./Session"
     import {modaltoggle, web3,  getContract} from "./Singleton"
-    import {marketaddress} from "./Setting.js.bak"
+    import {marketaddress} from "./Setting.js"
     import {AssetCache} from "./Cache"
     //import {web3, defaultEvmStores} from 'svelte-web3'
     export let assetid = 1;

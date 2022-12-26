@@ -12,7 +12,7 @@
     import TokenSelector from "./TokenSelector.svelte";
     import {AssetCache, CollectionCache} from "./Cache"
     import {web3, getContract} from "./Singleton"
-    import {marketaddress} from "./Setting.js.bak"
+    import {marketaddress} from "./Setting.js"
     export let assetid={id:1, index:1};
 
     let usernamespan, listdata=[], offerdata=[], collectiondata={};
