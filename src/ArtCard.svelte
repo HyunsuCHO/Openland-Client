@@ -7,7 +7,7 @@
     import { afterUpdate } from 'svelte';
     import CollectionNamePresenter from './CollectionNamePresenter.svelte';
     import UsernamePresenter from './UsernamePresenter.svelte';
-    import Asset from './Asset.svelte';
+    import Asset from './RentAsset.svelte';
     import {AssetCache} from './Cache'
     //let collectionamediv, usernamediv;
     async function OnArtIdChange()
@@ -32,58 +32,54 @@
         new Asset({target: contenttag, hydrate: true, props:{assetid:{id: artid.id, index:artid.index}}});
     }
 
-    $: if(artid!="")
-    {
-        OnArtIdChange();
-    }
+
+    // $: if(artid!="")
+    // {
+    //     OnArtIdChange();
+    // }
 </script>
 
 <div class="artcarddiv">
     <input type="number" style="display: none" bind:value={artid} on:change={OnArtIdChange}>
-    <a on:click={OnClick}>
-        <img class="nomargin" src={getIPFSURL(artdata.ipfshash)} alt/>
+    <div on:click={OnClick} style="height: max-content">
+
+        <img class="square_img nomargin" src={artdata.ipfshash} alt/>
+
+        <div style="padding: 15px; font-size: 10px">
+        <h5 style="margin-top: 0" class="nomargin artname">{artdata.name}</h5>
+            by&nbsp;{artdata.creator}
         <br/>
-        <!--<h6 class="nomargin">{artdata.collection}</h6>-->
-        <CollectionNamePresenter collectionid={{id: artdata.collectionid}}></CollectionNamePresenter>
-        <!--<div bind:this={collectionamediv}></div>-->
-        <h5 class="nomargin artname">{artdata.name}</h5>
-        <!--<p class="nomargin">by <a href>{artdata.author.name}</a></p>-->
-        <UsernamePresenter userid={{id: artdata.creator}}></UsernamePresenter>
-        <!--<div bind:this={usernamediv}></div>-->
-        <br/>
-        <p class="description">{artdata.description}</p>
-        {#if displayfooter}
-            <div class="artcardfooter">
-                <Tooltip name="…">More Options</Tooltip>
-                <span>Favorites {artdata.favorites}</span>
-            </div>
-        {/if}
-    </a>
+        <p class="artcard_description">{artdata.description}</p>
+        <div class="artcardfooter">
+            <Tooltip name="…">More Options</Tooltip>
+            <span>Favorites <span style="font-weight: 600"> {artdata.favorites}</span></span>
+        </div>
+        </div>
+    </div>
 </div>
 
 <style>
 .artcarddiv
 {
   display: inline-block;
-  width: 20em;
-  height: 28em;
-  min-height: 28em;
-  max-height: 32em;
-  min-width: 20em;
-  max-width: 20em;
-  border-radius: 1em;
-  box-shadow: 5px 5px 5px 5px gray;
+  width: 24rem;
+  min-height: 34rem;
+  min-width: 24rem;
+  max-width: 24rem;
+  box-shadow: 0 0 8px 5px #eeeeee;
+  border-radius :0.7rem;
   /*overflow: auto;*/
-  margin: 0.5em;
+  margin: 0.5rem 1.5rem 1.5rem 0;
 }
 
-.artcarddiv img 
-{
-  display: inline;
-  width: 100%;
-  height: 15em;
-  overflow: hidden;
+.square_img {
+    width: 100%; /* 상위 태그의 가로 너비에 맞춤 */
+    height: auto; /* 세로 너비를 가로 너비에 맞춰 조정 */
+    aspect-ratio: 1 / 1; /* 정사각형 비율 유지 */
+    object-fit: cover; /* 이미지가 태그를 넘어가지 않도록 조정 */
+    display: block;
 }
+
 
 .artcardfooter
 {
@@ -91,7 +87,7 @@
     justify-content: space-between;
 }
 
-.description
+.artcard_description
 {
     overflow: hidden;
     text-overflow: ellipsis;

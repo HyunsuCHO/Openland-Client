@@ -107,7 +107,7 @@
         <div class="assetcards">
             <h3>Collections</h3>
             {#each collections as collection}
-                <CollectionCard collectionid={{id:collection.id}}></CollectionCard>
+                <CollectionCard _collectionid={{id:collection.id}}></CollectionCard>
             {/each}
             <h3>Assets</h3>
             {#each assets as asset}
