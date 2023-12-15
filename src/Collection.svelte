@@ -24,11 +24,95 @@
         bannerimage: "https://picsum.photos/511",
         iconimage: "https://picsum.photos/251",
         description: "This is test collection.",
-    }, collectionid, assets = [], activitydata = [];
+    }, collectionid = [];
     
     let info = {assets: 0, volumes:0,owners:0};
 
     let index = 0, y, type = 0;
+
+    let assets = [
+        {
+            "collectionid": 1,
+            "name": "Artwork Name",
+            "creator": "creator_id_or_name_here",
+            "description": "Artwork Description",
+            "displayfooter": true,
+            "artid": 1,
+            "ipfshash": "ipfs_hash_value_here_1",
+            "favorites": 8
+        },
+        {
+            "collectionid": 1,
+            "name": "Artwork Name",
+            "creator": "creator_id_or_name_here",
+            "description": "Artwork Description",
+            "displayfooter": true,
+            "artid": 2,
+            "ipfshash": "ipfs_hash_value_here_2",
+            "favorites": 19
+        },
+        {
+            "collectionid": 1,
+            "name": "Artwork Name",
+            "creator": "creator_id_or_name_here",
+            "description": "Artwork Description",
+            "displayfooter": true,
+            "artid": 3,
+            "ipfshash": "ipfs_hash_value_here_3",
+            "favorites": 4
+        },
+        {
+            "collectionid": 1,
+            "name": "Artwork Name",
+            "creator": "creator_id_or_name_here",
+            "description": "Artwork Description",
+            "displayfooter": true,
+            "artid": 4,
+            "ipfshash": "ipfs_hash_value_here_4",
+            "favorites": 30
+        },
+        {
+            "collectionid": 1,
+            "name": "Artwork Name",
+            "creator": "creator_id_or_name_here",
+            "description": "Artwork Description",
+            "displayfooter": true,
+            "artid": 5,
+            "ipfshash": "ipfs_hash_value_here_5",
+            "favorites": 15
+        },
+        {
+            "collectionid": 1,
+            "name": "Artwork Name",
+            "creator": "creator_id_or_name_here",
+            "description": "Artwork Description",
+            "displayfooter": true,
+            "artid": 6,
+            "ipfshash": "ipfs_hash_value_here_6",
+            "favorites": 43
+        },
+        {
+            "collectionid": 1,
+            "name": "Artwork Name",
+            "creator": "creator_id_or_name_here",
+            "description": "Artwork Description",
+            "displayfooter": true,
+            "artid": 7,
+            "ipfshash": "ipfs_hash_value_here_7",
+            "favorites": 48
+        },
+        {
+            "collectionid": 1,
+            "name": "Artwork Name",
+            "creator": "creator_id_or_name_here",
+            "description": "Artwork Description",
+            "displayfooter": true,
+            "artid": 8,
+            "ipfshash": "ipfs_hash_value_here_8",
+            "favorites": 52
+        }
+    ]
+
 
     async function OnCollectionIdChange()
     {
@@ -169,7 +253,6 @@
             <div bind:this={activitydiv} class="categorybardiv" on:click={OnActivityClick}>Activity</div>
         </div>
         <div class="itemsdiv">
-            <!--
             <Sidebar>
                 <Collapse buttonname="Status">
                     <div class="eventtypediv">
@@ -203,9 +286,8 @@
                     </div>
                 </Collapse>
             </Sidebar>
-            -->
+
             <div>
-                <!--
                 <div>
                     <input class="searchbynameinput" placeholder="Search by name"/>
                     <select class="itemsselect">
@@ -228,11 +310,11 @@
                         <option>Oldest</option>
                     </select>
                 </div>
-                -->
+
                 <div class="assetcards">
                     {#if type == 0}
                     {#each assets as asset}
-                        <ArtCard artid={{id:asset.id, index:1}}></ArtCard>
+                        <ArtCard artdata={asset}></ArtCard>
                     {/each}
                     {:else}
                     <table>

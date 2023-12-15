@@ -5,7 +5,40 @@
     import CollectionCard from './CollectionCard.svelte'
     import {onMount} from 'svelte'
     let datas = [
-];
+        {
+            id : 1,
+            thumbnail:"https://picsum.photos/501",
+            profileimg:"https://picsum.photos/200",
+            title:"TestDrop1",
+            author:{name:"TestCreator1"},
+            creator : "Test1",
+            price : "0.095ETH"
+        },
+        {
+            id : 2,
+            thumbnail:"https://picsum.photos/502",
+            profileimg:"https://picsum.photos/201",
+            title:"TestDrop2",
+            author:{name:"TestCreator2"},
+            price : "0.086ETH"
+        },
+        {
+            id : 3,
+            thumbnail:"https://picsum.photos/503",
+            profileimg:"https://picsum.photos/202",
+            title:"TestDrop3",
+            author:{name:"TestCreator3"},
+            price : "0.125ETH"
+        },
+        {
+            id : 4,
+            thumbnail:"https://picsum.photos/504",
+            profileimg:"https://picsum.photos/203",
+            title:"TestDrop4",
+            author:{name:"TestCreator4"},
+            price : "0.123ETH"
+        },
+    ];
 
     async function OnCreateCollectionButtonClick()
     {
@@ -44,7 +77,7 @@
             </div>
         </div>
     -->
-        <CollectionCard collectionid={{id:data.id}}></CollectionCard>
+        <CollectionCard _collectionid={{id:data.id}}></CollectionCard>
     {/each}
     </div>
 </div>

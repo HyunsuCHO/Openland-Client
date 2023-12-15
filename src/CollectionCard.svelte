@@ -1,5 +1,7 @@
 <script>
-    export let collectiondata = {}, collectionid={id:1}, displayfooter = false;
+    export let _collectiondata = {}, _collectionid = {};
+    let collectiondata = _collectiondata;
+    // let collectionid = JSON.parse(JSON.stringify(_collectionid));
     import Tooltip from "./Tooltip.svelte";
     import {axios} from "./Singleton"
     import {getIPFSURL, getFileURL} from './Util';
@@ -7,14 +9,14 @@
     import { afterUpdate } from 'svelte';
     import CollectionNamePresenter from './CollectionNamePresenter.svelte';
     import UsernamePresenter from './UsernamePresenter.svelte';
-    import Asset from './Asset.svelte';
+    import Asset from './RentAsset.svelte';
     import Collection from './Collection.svelte';
     let collectionamediv, usernamediv;
     async function OnCollectionIdChange()
     {
         if(!collectionid) return;
-        let result = await $axios.get("/collections/collection/"+collectionid.id);
-        collectiondata = result.data;
+        // let result = await $axios.get("/collections/collection/"+collectionid.id);
+        collectiondata = collectiondata.data;
 
         /*
         new CollectionNamePresenter({target: collectionamediv, hydrate: true, props:{collectionid:{id: artdata.collectionid}}});
@@ -30,22 +32,26 @@
     }
 
 
-    $: if(collectionid != "")
-    {
-        OnCollectionIdChange();
-    }
+    // $: if(_collectiondata != undefined)
+    // {
+    //     OnCollectionIdChange();
+    // }
+    // collectiondata = JSON.stringify(collectiondata)
+
 </script>
 
 <div class="artcarddiv">
     <a on:click={OnClick}>
-        <img class="nomargin" src={getFileURL(collectiondata.featuredimg)} alt/>
         <br/>
-        <!--<h6 class="nomargin">{artdata.collection}</h6>-->
-        <!--<CollectionNamePresenter collectionid={{id: artdata.collectionid}}></CollectionNamePresenter>-->
-        <div bind:this={collectionamediv}></div>
-        <h4 class="nomargin">{collectiondata.name}</h4>
-        <!--<p class="nomargin">by <a href>{artdata.author.name}</a></p>-->
-        <UsernamePresenter userid={{id: collectiondata.creator}}></UsernamePresenter>
+
+        <img class="nomargin" src={collectiondata.thumbnail} alt/>
+        <br/>
+<!--        <h6 class="nomargin">{artdata.collection}</h6>-->
+<!--        <CollectionNamePresenter collectionid={{id: collectiondata.id}}></CollectionNamePresenter>-->
+<!--        <div bind:this={collectionamediv}></div>-->
+        <h4 class="nomargin">{collectiondata.title}</h4>
+        <p class="nomargin">by <a href>{collectiondata.author.name}</a></p>
+<!--        <UsernamePresenter userid={{id: collectiondata.creator}}></UsernamePresenter>-->
         <!--<div bind:this={usernamediv}></div>-->
         <br/>
         <p>{collectiondata.description}</p>
