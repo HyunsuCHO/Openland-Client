@@ -17,7 +17,7 @@
 
     let usernamespan, listdata=[], offerdata=[], collectiondata={};
     // Add dependencies
-    
+
     export let assetdata ={
         title:"TestAsset",
         author: {name: "TestAccount"},
@@ -211,7 +211,7 @@
         <!--
         <Collapse buttonname="Properties">
         <div class="propertiesdiv">
-            
+
             {#each assetdata.properties as property}
                 <div class="propertydiv">
                     <span class="propertytype">{property.type}</span>
@@ -221,7 +221,7 @@
                     <span class="propertypercent">{property.percent}% have this trait</span>
                 </div>
             {/each}
-            
+
         </div>
         </Collapse>
     -->
@@ -265,7 +265,7 @@
                         <th>Action</th>
                     </thead>
                     <tbody>
-                        
+
                         {#each listdata as listitem}
                             <tr>
                                 <td><img class="ethereum" src="ethereum.ico"/>{listitem.cost}</td>
@@ -275,7 +275,7 @@
                                 <td><button on:click={OnListAcceptButtonClick} value={listitem.tokenindex} cost={listitem.cost}>Accept</button></td>
                             </tr>
                         {/each}
-                        
+
                     </tbody>
                 </table>
             </Collapse>
@@ -290,7 +290,7 @@
                         <th>Action</th>
                     </thead>
                     <tbody>
-                        
+
                         {#each offerdata as offer}
                             <tr>
                                 <td><img class="ethereum" src="ethereum.ico"/>{offer.cost}</td>
@@ -301,7 +301,7 @@
                                 <td><button on:click={OnOfferAcceptButtonClick} value={offer.id} to={offer.to}>Accept</button></td>
                             </tr>
                         {/each}
-                        
+
                     </tbody>
                 </table>
             </Collapse>
@@ -367,100 +367,3 @@
 {
     margin: 1em;
 }
-
-.hodiv h7
-{
-    margin: 0;
-}
-
-.assetimg
-{
-    width: 100%;
-    height: 100%;
-}
-
-h1,h2,h3,h5,h6, h4, h7{
-    text-align: center;
-    display: inline-block;
-}
-
-.imgcontainer
-{
-    display: inline-flex;
-    flex-direction: column;
-    margin: 0;
-    border: 1px solid #AAAAAA;
-    border-radius: 6px;
-    overflow: hidden;
-    height:30em;
-    width:100%;
-}
-
-.assetownerdiv
-{
-    display: inline-flex;
-    justify-content: space-around;
-    margin: 0;    
-}
-
-div
-{
-    margin : 0;
-}
-
-button
-{
-    width: 9em;
-    height:2.5em;
-    border-radius: 0.5em;
-    border: 1px solid rgb(1, 119, 255);
-    background-color:rgb(1, 119, 255);
-    font-size: large;
-}
-
-.descriptiondiv
-{
-    margin: 0.5em;
-}
-
-th
-{
-    font-weight: normal;
-    font-size:medium;
-}
-
-.propertiesdiv
-{
-    display: flex;
-    margin:0.5em;
-    flex-wrap: wrap;
-}
-
-.propertydiv
-{
-    margin:0.2em;
-    background-color: #DDDDFF;
-    border: 1px solid #8888FF;
-    border-radius: 0.3em;
-    text-align:center;
-    width:8em;
-}
-
-.propertytype
-{
-    font-size:small;
-    color: #6666FF;
-    font-weight:bold;
-}
-
-.propertyvalue
-{
-    font-size:smaller;
-    font-weight:bold;
-}
-
-.propertypercent
-{
-    font-size:small;
-}
-</style>

@@ -2,7 +2,7 @@
     export let assetid={id:1, index:1}, assetdata={};
     import {axios} from "./Singleton"
     import { onMount } from 'svelte';
-    import Asset from './Asset.svelte'
+    import Asset from './RentAsset.svelte'
     import {getIPFSURL} from './Util'
 
     async function OnAssetIdChange()
