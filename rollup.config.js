@@ -77,6 +77,8 @@ export default {
 		production && terser()
 	],
 	watch: {
-		clearScreen: false
+		include : 'src/**',
+		clearScreen: false,
+		input: `src/main.js`
 	}
 };
