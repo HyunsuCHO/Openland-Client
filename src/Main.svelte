@@ -2,7 +2,7 @@
     import Header from './Header.svelte';
     import Footer from './Footer.svelte';
     import ArtCard from './ArtCard.svelte';
-    import Asset from './Asset.svelte';
+    import Asset from './RentAsset.svelte';
     import Explore from './Explore.svelte';
     import Create from './Create.svelte';
     import {MetamaskAccounts, MetamaskConnected,SessionData} from './Session.js';
@@ -238,4 +238,6 @@ button
 {
     width: 100%;
 }
+
+
 </style>
