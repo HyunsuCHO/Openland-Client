@@ -6,20 +6,27 @@
     import CollectionNamePresenter from "./CollectionNamePresenter.svelte";
     import UsernamePresenter from "./UsernamePresenter.svelte";
     import {onMount} from 'svelte';
-    import {SessionData, MetamaskAccounts} from './Session'
+    // import {SessionData, MetamaskAccounts, getRentInfo} from './Session'
     import Profile from "./Profile.svelte";
     import BidMenu from "./BidMenu.svelte";
     import TokenSelector from "./TokenSelector.svelte";
     import {AssetCache, CollectionCache} from "./Cache"
     import {web3, getContract} from "./Singleton"
     import {marketaddress} from "./Setting.js"
+    import {startRenting, cancelRenting, extendRenting, getRentPrice, getRentInfo} from "./Session";
+
     export let assetid={id:1, index:1};
 
     let usernamespan, listdata=[], offerdata=[], collectiondata={};
     // Add dependencies
-    
+    let rentDuration = 1; // 기본 렌트 기간
+    var canRent = true;
+    const tokenId = 1;
+    let rentPrice;
+
     export let assetdata ={
         title:"TestAsset",
+        name : "TestAssetName",
         author: {name: "TestAccount"},
         owner: {name: "OwnerAccount"},
         twitterlink: "https://twitter.com",
@@ -83,11 +90,33 @@
 
     }
 
-    function OnMakeBidButtonClick()
+    // 렌트 기간을 증가시키는 함수
+    function increaseRentDuration() {
+        rentDuration += 1;
+    }
+
+    // 렌트 기간을 감소시키는 함수
+    function decreaseRentDuration() {
+        if (rentDuration > 1) {
+            rentDuration -= 1;
+        }
+    }
+
+    async function startRentingButtonClick()
     {
-        $modaltoggle = true;
-        $modalprop = {assetid: assetid.id};
-        $modalslot = BidMenu;
+        await startRenting(tokenId, rentDuration);
+        await checkRentInfo(tokenId);
+    }
+
+    async function extendRentingButtonClick()
+    {
+        await extendRenting(tokenId, rentDuration);
+        await checkRentInfo(tokenId);
+    }
+    async function cancelRentingButtonClick()
+    {
+        await cancelRenting(tokenId, rentDuration);
+        await checkRentInfo(tokenId);
     }
 
     async function OnListAcceptButtonClick()
@@ -190,7 +219,20 @@
         getOffers();
         getTokenData();
     }
+
+    async function checkRentInfo(tokenId){
+        const rentInfo = await getRentInfo(tokenId);
+        canRent = (rentInfo.userAddress === '0x0000000000000000000000000000000000000000')
+    }
+
+    async function checkRentPrice(){
+        rentPrice = await getRentPrice(tokenId);
+    }
+
+    checkRentPrice();
+    checkRentInfo(1);
     onMount(OnAssetIdChange);
+
 </script>
 <div class="assetdiv">
     <div class="leftsidediv">
@@ -306,7 +348,8 @@
 
             <div class="innerhodiv">
                 <h7>Owner</h7>
-                <span>  <UsernamePresenter userid={{id:tokendata.ownerid}}></UsernamePresenter></span><!--<span>Favorites:{assetdata.favorites}</span>-->
+                <span>testOwner</span>
+<!--                <span>  <UsernamePresenter userid={{id:tokendata.ownerid}}></UsernamePresenter></span>&lt;!&ndash;<span>Favorites:{assetdata.favorites}</span>&ndash;&gt;-->
                 <br/>
                 <h7>Description</h7>
                 <span>{assetdata.description}</span>
@@ -331,20 +374,37 @@
                 <div class="innerhodiv">
                     <h7>Market Price</h7>
                     <br/>
-                    <h6 class="nomargin" style="color: #888888"><img class="bigethereum" src="ethereum.ico"/>{assetdata.highestprice}</h6>
+                    <h6 class="nomargin" style="color: #888888"><img class="bigethereum" src="ethereum.ico"/>6 wei</h6>
                     <br />
                     <span style="color: #888888; font-size: 0.75rem"> * You cannot purchase this work because it is not for sale. This is the average price of the collection of this work.</span>
                     <br/>
                     <br/>
                     <h7>Rental Price</h7>
                     <br/>
-                    <h6 class="nomargin"><img class="bigethereum" src="ethereum.ico"/>{assetdata.highestprice} / 3 months</h6>
+                    <h6 class="nomargin"><img class="bigethereum" src="ethereum.ico"/>{rentPrice * 3} wei / 3 months</h6>
                     <br/>
                     <span style=" font-size: 0.75rem"> * 3 months rental is standard.</span>
                     <br/> <br/>
 
                     <!--{#if $SessionData && assetdata.creator == $SessionData.id}-->
-                    <button class="makebidbutton" on:click={OnMakeBidButtonClick}>Rent it</button>
+                    {#if canRent}
+                        <button class="makebidbutton" on:click={() => startRentingButtonClick()}>Rent it</button>
+                        <div class="rent-duration-selector">
+                            <button class="numManButton" on:click={decreaseRentDuration}>-</button>
+                            <input type="number" class="quantity-input" min="1" bind:value={rentDuration} />
+                            <button class="numManButton" on:click={increaseRentDuration}>+</button>
+                        </div>
+                    {:else}
+                        <div style="display: flex; margin-bottom : 4px">
+                        <button class="makebidbutton" on:click={() => extendRentingButtonClick()}>Extend</button>
+                        <div class="rent-duration-selector">
+                            <button class="numManButton" on:click={decreaseRentDuration}>-</button>
+                            <input type="number" class="quantity-input" min="1" bind:value={rentDuration} />
+                            <button class="numManButton" on:click={increaseRentDuration}>+</button>
+                        </div>
+                        </div>
+                        <button class="makebidbutton" on:click={() => cancelRentingButtonClick()}>Cancel</button>
+                    {/if}
                 </div>
             </div>
 <!--            <br/>-->
@@ -360,12 +420,38 @@
 </div>
 
 <style>
+
 .makebidbutton
 {
     height: 3em;
     width: 10em;
 }
+.numManButton {
+    background-color: rgb(120, 120, 255);
+    border: none;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    outline: none;
+}
 
+.numManButton:active {
+    background-color: #8888AA;
+}
+
+.quantity-input {
+    text-align: center;
+    margin: 0 10px;
+    width: 50px;
+    border: 0;
+    border-radius: 4px;
+    padding: 5px;
+}
 .imgdiv
 {
     display: inline-flex;
