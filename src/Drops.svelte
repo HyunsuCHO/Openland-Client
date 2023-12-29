@@ -15,7 +15,7 @@
             id : 1,
             thumbnail:"https://picsum.photos/501",
         profileimg:"https://picsum.photos/200",
-        title:"TestDrop1",
+        title:"TestFunding1",
         author:{name:"TestCreator1"},
             creator : "Test1",
         price : "0.095ETH"
@@ -24,7 +24,7 @@
         id : 2,
         thumbnail:"https://picsum.photos/502",
         profileimg:"https://picsum.photos/201",
-        title:"TestDrop2",
+        title:"TestFunding2",
         author:{name:"TestCreator2"},
         price : "0.086ETH"
     },
@@ -32,7 +32,7 @@
         id : 3,
         thumbnail:"https://picsum.photos/503",
         profileimg:"https://picsum.photos/202",
-        title:"TestDrop3",
+        title:"TestFunding3",
         author:{name:"TestCreator3"},
         price : "0.125ETH"
     },
@@ -40,7 +40,7 @@
         id : 4,
         thumbnail:"https://picsum.photos/504",
         profileimg:"https://picsum.photos/203",
-        title:"TestDrop4",
+        title:"TestFunding4",
         author:{name:"TestCreator4"},
         price : "0.123ETH"
     },
@@ -49,7 +49,7 @@
         id : 5,
         img:"https://picsum.photos/506",
         profileimg:"https://picsum.photos/204",
-        title:"TestPastDrop5",
+        title:"TestPastFunding5",
         author:{name:"TestCreator5"},
         price : "0.4564ETH"
     },
@@ -57,7 +57,7 @@
             id : 6,
             thumbnail:"https://picsum.photos/506",
             profileimg:"https://picsum.photos/205",
-            title:"TestPastDrop6",
+            title:"TestPastFunding6",
             author:{name:"TestCreator6"},
             price : "0.095ETH"
         },
@@ -65,7 +65,7 @@
             id : 7,
             thumbnail:"https://picsum.photos/507",
             profileimg:"https://picsum.photos/206",
-            title:"TestPastDrop7",
+            title:"TestPastFunding7",
             author:{name:"TestCreator7"},
             price : "0.34TH"
         },
@@ -73,7 +73,7 @@
             id : 8,
             thumbnail:"https://picsum.photos/508",
             profileimg:"https://picsum.photos/207",
-            title:"TestDrop8",
+            title:"TestFunding8",
             author:{name:"TestCreator8"},
             price : "0.765ETH"
         }]

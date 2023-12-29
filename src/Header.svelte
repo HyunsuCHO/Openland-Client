@@ -18,6 +18,7 @@
     import MetamaskLoginButton from './MetamaskLoginButton.svelte';
     import {getFileURL} from './Util'
     import Drops from "./Drops.svelte";
+    import Rent from "./Rent.svelte";
     let searchstring = "";
 
     onMount(()=>{
@@ -31,6 +32,12 @@
     {
         let contenttag = document.getElementsByTagName('content')[0];
         new Drops({target: contenttag, hydrate: true});
+    }
+
+    function OnRentButtonClick()
+    {
+        let contenttag = document.getElementsByTagName('content')[0];
+        new Rent({target: contenttag, hydrate: true});
     }
 
     function OnExploreButtonClick()
@@ -137,8 +144,8 @@
     <div class="headersearchbar nomargin"><SearchBar keydownevent={OnEnterKeyDown} bind:content={searchstring} placeholder="Search items, collections, and accounts"></SearchBar></div>
     <div class="rightflex nomargin">
         <DropdownMenu name="Explore" action={OnExploreButtonClick} contents={[]}></DropdownMenu>
-        <DropdownMenu name="Drops" action={OnDropsButtonClick} contents={[]}></DropdownMenu>
-        <DropdownMenu name="Rent" action={OnDropsButtonClick} contents={[]}></DropdownMenu>
+        <DropdownMenu name="Funding" action={OnDropsButtonClick} contents={[]}></DropdownMenu>
+        <DropdownMenu name="Rent" action={OnRentButtonClick} contents={[]}></DropdownMenu>
         <DropdownMenu name="Activities" action={OnActivityButtonClick} contents={[/*{name:"Rankings", action:OnRankingsButtonClick}, {name:"Activity", action:OnActivityButtonClick}*/]}></DropdownMenu>
         <DropdownMenu name="Create" contents={[]} action={OnCreateButtonClick}></DropdownMenu>
         <DropdownMenu name="Account" contents={[{name:"Profile", action:OnProfileButtonClick}, {name: "Watchlist", action:OnWatchlistButtonClick}, {name: "My Collections", action:OnMyCollectionButtonClick}]}></DropdownMenu>

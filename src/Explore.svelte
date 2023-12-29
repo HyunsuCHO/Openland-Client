@@ -4,63 +4,62 @@
     import CollectionCard from './CollectionCard.svelte'
     import {onMount} from 'svelte'
     let index = 0, y;
-    let datas = [{
-
+    let datas = [/*{
         img:"https://picsum.photos/501",
-        thumbnail:"https://picsum.photos/200",
+        profileimg:"https://picsum.photos/200",
         title:"TestCollection1",
         author:{name:"TestUser1"},
         description:"This is TestCollection"
     },
     {
         img:"https://picsum.photos/502",
-        thumbnail:"https://picsum.photos/201",
+        profileimg:"https://picsum.photos/201",
         title:"TestCollection2",
         author:{name:"TestUser2"},
         description:"This is TestCollection"
     },
     {
         img:"https://picsum.photos/503",
-        thumbnail:"https://picsum.photos/202",
+        profileimg:"https://picsum.photos/202",
         title:"TestCollection3",
         author:{name:"TestUser3"},
         description:"This is TestCollection"
     },
     {
         img:"https://picsum.photos/504",
-        thumbnail:"https://picsum.photos/203",
+        profileimg:"https://picsum.photos/203",
         title:"TestCollection4",
         author:{name:"TestUser4"},
         description:"This is TestCollection"
     },
     {
         img:"https://picsum.photos/505",
-        thumbnail:"https://picsum.photos/204",
+        profileimg:"https://picsum.photos/204",
         title:"TestCollection5",
         author:{name:"TestUser5"},
         description:"This is TestCollection"
     },
     {
         img:"https://picsum.photos/506",
-        thumbnail:"https://picsum.photos/205",
+        profileimg:"https://picsum.photos/205",
         title:"TestCollection6",
         author:{name:"TestUser6"},
         description:"This is TestCollection"
     },
     {
         img:"https://picsum.photos/507",
-        thumbnail:"https://picsum.photos/206",
+        profileimg:"https://picsum.photos/206",
         title:"TestCollection7",
         author:{name:"TestUser7"},
         description:"This is TestCollection"
     },
     {
         img:"https://picsum.photos/508",
-        thumbnail:"https://picsum.photos/207",
+        profileimg:"https://picsum.photos/207",
         title:"TestCollection8",
         author:{name:"TestUser8"},
         description:"This is TestCollection"
-    }
+    }*/
 ];
     const genres = ['Trending', 'Top','Cartoon','Modern','Classic']
 
@@ -72,7 +71,7 @@
     async function getData()
     {
         let params = {offset:index}
-        
+
         let result = await $axios.get("/collections/getrandom/20",{params});
         datas = [...datas,...result.data];
     }
@@ -99,7 +98,7 @@
         <!--
             <div class="collectiondiv">
                 <img class="collectionimg" src={data.img}/>
-                <img class="collectionauthorimg" src={data.thumbnail}>
+                <img class="collectionauthorimg" src={data.profileimg}>
                 <div class="collectiondescriptiondiv">
                     <h6 class="nomargin">{data.title}</h6>
                     <h7 class="decriptionauthor">by <a>{data.author.name}</a></h7>
@@ -107,7 +106,7 @@
                 </div>
             </div>
         -->
-        <CollectionCard _collectiondata={data}></CollectionCard>
+        <CollectionCard collectionid={{id: data.id}}></CollectionCard>
     {/each}
     </div>
 </div>
