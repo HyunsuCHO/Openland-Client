@@ -6,7 +6,14 @@
     import CollectionNamePresenter from "./CollectionNamePresenter.svelte";
     import UsernamePresenter from "./UsernamePresenter.svelte";
     import {onMount} from 'svelte';
-    import {SessionData, MetamaskAccounts} from './Session'
+    import {
+        SessionData,
+        MetamaskAccounts,
+        consentToSponsor,
+        mintNFTEach,
+        withdrawFundRaised,
+        consentToEarlyBirdSponsor
+    } from './Session'
     import Profile from "./Profile.svelte";
     import BidMenu from "./BidMenu.svelte";
     import TokenSelector from "./TokenSelector.svelte";
@@ -17,11 +24,13 @@
     import AssetNamePresenter from "./AssetNamePresenter.svelte";
     import Sidebar from "./Sidebar.svelte";
     import AssetImagePresenter from "./AssetImagePresenter.svelte";
+    import {getFundingInfo} from "./Session";
     export let assetid={id:1, index:1};
 
     var page = 'Overview';
     let usernamespan, listdata=[], offerdata=[], collectiondata={};
     let progressValue = 50;
+    var consentNum = 1;
     // Add dependencies
 
     let assets = [
@@ -283,6 +292,63 @@
         alert("Used gas:" + result.gasUsed);
     }
 
+    // requiredConsents: mintingInfo[0],
+    // maxMintsPerAddress: mintingInfo[1],
+    // mintPrice: web3.utils.fromWei(mintingInfo[2], 'ether'),
+    // earlyBirdMintPrice: web3.utils.fromWei(mintingInfo[3], 'ether'),
+    // mintingDeadline: new Date(mintingInfo[4] * 1000).toLocaleString(),
+    // consentDeadline: new Date(mintingInfo[5] * 1000).toLocaleString(),
+    // earlyBirdConsentStartTime: new Date(mintingInfo[6] * 1000).toLocaleString(),
+    // earlyBirdConsentEndTime: new Date(mintingInfo[7] * 1000).toLocaleString(),
+    // totalConsents: mintingInfo[8],
+    // mintAtOnce: mintingInfo[9],
+    // mintEach: mintingInfo[10]
+
+    var consentPercent = 1;
+    let fundingInfo, curPrice;
+    let fundStatus = 'Not Open';
+    // let mintingDeadline, consentDeadline,
+    //     earlyBirdConsentStartTime, earlyBirdConsentEndTime, consentPrice, earlyBirdConsentPrice;
+
+    async function getAllFundingInfo(){
+        fundingInfo = await getFundingInfo();
+        consentPercent = (fundingInfo.totalConsents / fundingInfo.requiredConsents) * 10;
+
+        curPrice = determineCurrentPrice(fundingInfo.earlyBirdConsentStartTime, fundingInfo.earlyBirdConsentEndTime,
+            fundingInfo.consentDeadline, fundingInfo.mintingStartTime);
+        if(curPrice === -1){
+            curPrice = fundingInfo.consentPrice;
+        }
+
+
+    }
+
+    function determineCurrentPrice(earlyBirdConsentStartTime, earlyBirdConsentEndTime, consentDeadline, mintingStartTime) {
+        const now = new Date(); // 현재 시간
+
+        // early bird 기간이면 earlyBirdConsentPrice 반환
+        if (now >= earlyBirdConsentStartTime && now <= earlyBirdConsentEndTime) {
+            fundStatus = 'Allowlist Stage'
+            return fundingInfo.earlyBirdConsentPrice;
+        }
+        // consent 기간이후이고 minting 기간 전이면 consentPrice 반환
+        else if (now > earlyBirdConsentEndTime && now <= consentDeadline) {
+            fundStatus = 'Public Stage'
+            return fundingInfo.consentPrice;
+        }
+        // consent 기간이후이고 minting 기간 전이면 consentPrice 반환
+        else if ( now > consentDeadline && now < mintingStartTime) {
+            fundStatus = 'Fund Ended & Minting in Preparation'
+            return -1;
+        }
+        else{
+            fundStatus = 'Minting Stage'
+            return 0;
+        }
+        // 위 조건에 맞지 않으면 null 반환 (혹은 기본 가격 또는 에러 메시지를 반환할 수 있음)
+    }
+
+
     async function getTokenData()
     {
         let result = await $axios.get("/assets/assetoken/"+assetid.id+"/"+assetid.index);
@@ -379,6 +445,17 @@
         page = crumbs[index].title;
     }
 
+    function increaseRentDuration() {
+        consentNum += 1;
+    }
+
+    // 렌트 기간을 감소시키는 함수
+    function decreaseRentDuration() {
+        if (consentNum > 1) {
+            consentNum -= 1;
+        }
+    }
+
     function ActivityType(type)
     {
         switch (type)
@@ -392,7 +469,15 @@
     }
     // ---
 
+    $: isEarlyBirdPeriod = fundStatus === 'Allowlist Stage';
+    $: isPublicStage = fundStatus === 'Public Stage';
+    $: isMintingStage = fundStatus === 'Minting Stage';
+
+    getAllFundingInfo();
     onMount(OnAssetIdChange);
+
+
+
 
 
 </script>
@@ -440,40 +525,68 @@
     </div>
     <div>
         <div class="assetinnerdiv" >
-            <h7 style="text-align: left; margin-top: 0">{progressValue}%  minted</h7>
+            <h7 style="text-align: left; margin-top: 0">{consentPercent}%  funded</h7>
             <div class="progress-bar-container">
-                <div class="progress-bar" style="width: {progressValue}%;">
+                <div class="progress-bar" style="width: {consentPercent}%;">
                 </div>
             </div>
 
             <br/>
             <div class="hodiv">
                 <div class="innerhodiv">
-                    <h7>Public Stage</h7>
+                    <h7>{fundStatus}</h7>
                     <br/>
-                    <h6 class="nomargin">{assetdata.highestprice} ETH</h6>
+                    <h6 class="nomargin">{curPrice} eth</h6>
                     <br/>
-                    <span style=" font-size: 0.75rem"> * 3 months rental is standard.</span>
+                    <span style=" font-size: 0.75rem"> * 펀딩 스케쥴에 따라 가격이 바귈 수 있습니다. </span>
                     <br/> <br/>
 
                     <!--{#if $SessionData && assetdata.creator == $SessionData.id}-->
-                    <button class="makebidbutton" on:click={OnMakeBidButtonClick}>Mint</button>
+                    <div style="display: flex; margin-bottom : 4px">
+                        {#if isEarlyBirdPeriod}
+                            <button class="makebidbutton" on:click={() => consentToEarlyBirdSponsor(consentNum)}>Early Bird Fund</button>
+                            <div class="rent-duration-selector">
+                                <button class="numManButton" on:click={decreaseRentDuration}>-</button>
+                                <input type="number" class="quantity-input" min="1" bind:value={consentNum} />
+                                <button class="numManButton" on:click={increaseRentDuration}>+</button>
+                            </div>
+                        {:else if isPublicStage}
+                            <button class="makebidbutton" on:click={() => consentToSponsor(consentNum)}>Fund</button>
+                            <div class="rent-duration-selector">
+                                <button class="numManButton" on:click={decreaseRentDuration}>-</button>
+                                <input type="number" class="quantity-input" min="1" bind:value={consentNum} />
+                                <button class="numManButton" on:click={increaseRentDuration}>+</button>
+                            </div>
+                            <button class="makebidbutton" on:click={() => (consentNum)}>Fund</button>
+                        {:else if isMintingStage}
+                            {#if consentPercent < 100}
+                                <button class="makebidbutton" on:click={() => withdrawFundRaised}>Withdraw</button>
+                            {:else}
+                                <button class="makebidbutton" on:click={() => mintNFTEach}>Mint</button>
+                            {/if}
+                        {/if}
+                    </div>
                 </div>
             </div>
             <div class="innerhodiv" style="margin-left: 0">
                 <h6 style="margin-top: 2rem">Mint schedule</h6>
                 <br/>
                 <h7 style="margin-top: 1rem;line-height: 2.5rem; white-space: pre-line; text-align: left">
-                    AEYER NFT + PFP Holders
-                    <span style="color: #666666;">November 6 at 12:00 GMT+9</span>
+                    Allowlist Stage
+                    <span style="color: #666666;">{(fundingInfo?.earlyBirdConsentStartTime).toLocaleString()} - {(fundingInfo?.earlyBirdConsentEndTime).toLocaleString()}</span>
                     <br/>
-                    <span style="font-weight: 300; color: #CCCCCC;">N0.0084ETH</span></h7>
+                    <span style="font-weight: 300; color: #CCCCCC;">{fundingInfo?.earlyBirdConsentPrice} ETH</span></h7>
                 <br/>
                 <h7 style="margin-top: 1rem;line-height: 2.5rem; white-space: pre-line; text-align: left">
                     Public Stage
-                    <span style=" color: #666666;">November 7 at 12:00 GMT+9</span>
+                    <span style=" color: #666666;">{(fundingInfo?.earlyBirdConsentEndTime).toLocaleString()} - {(fundingInfo?.consentDeadline).toLocaleString()}</span>
                     <br/>
-                    <span style="font-weight: 300; color: #CCCCCC;">N0.0012ETH</span></h7>
+                    <span style="font-weight: 300; color: #CCCCCC;">{fundingInfo?.consentPrice} ETH</span></h7>
+                <br/>
+                <h7 style="margin-top: 1rem;line-height: 2.5rem; white-space: pre-line; text-align: left">
+                    Minting Stage
+                    <span style=" color: #666666;">{(fundingInfo?.mintingStartTime).toLocaleString()}</span>
+                </h7>
             </div>
 
         </div>
@@ -487,8 +600,6 @@
     <div class="section_description" style="flex-wrap: wrap; justify-content: space-between;">
         <div class="column is-2 description" style="padding-bottom: 15px">
             <h5>Description</h5>
-            <br/>
-            <span class = "n6">{"https://picsum.photos/923"}</span>
             <br/>
             <span class = "n6">"Kiwi Flex" marks the first digital collaboration between FLOX and SWEATS, two of New Zealand’s most celebrated international artists. As an artistic duo, they've embarked on a global journey, merging their distinct styles through site-specific murals that creatively reflect the local flora, fauna, and cultures they encounter around the world. Now, for the first time ever, they venture into web3. With “Kiwi Flex,” FLOX and SWEATS fuse their artistic voices into a harmonious collection steeped in street art and inspired by the rich tapestry of life on Earth, bringing the very best of New Zealand’s dynamic artistic landscape to OpenSea.</span>
         </div>
@@ -504,8 +615,6 @@
 <div style="text-align: center; justify-content: center;" class="section_description">
     <div class="description" style="padding-bottom: 15px">
         <h5>Description</h5>
-        <br/>
-        <span class = "n6">{"https://picsum.photos/925"}</span>
         <br/>
         <span class = "n6">"Kiwi Flex" marks the first digital collaboration between FLOX and SWEATS, two of New Zealand’s most celebrated international artists. As an artistic duo, they've embarked on a global journey, merging their distinct styles through site-specific murals that creatively reflect the local flora, fauna, and cultures they encounter around the world. Now, for the first time ever, they venture into web3. With “Kiwi Flex,” FLOX and SWEATS fuse their artistic voices into a harmonious collection steeped in street art and inspired by the rich tapestry of life on Earth, bringing the very best of New Zealand’s dynamic artistic landscape to OpenSea.</span>
     </div>
@@ -645,6 +754,33 @@
 
 
 <style>
+
+.numManButton {
+    background-color: rgb(120, 120, 255);
+    border: none;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    outline: none;
+}
+
+.numManButton:active {
+    background-color: #8888AA;
+}
+
+.quantity-input {
+    text-align: center;
+    margin: 0 10px;
+    width: 50px;
+    border: 0;
+    border-radius: 4px;
+    padding: 5px;
+}
 .makebidbutton
 {
     height: 3em;
